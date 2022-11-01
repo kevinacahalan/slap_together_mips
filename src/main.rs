@@ -1,7 +1,8 @@
 use crate::emu::EmulatorAPI;
 
-
 pub mod instruction_types {
+
+    #[derive(Debug)]
     pub struct RType {
         pub op: u8,
         pub rs: u8,
@@ -11,6 +12,7 @@ pub mod instruction_types {
         pub funct: u8,
     }
 
+    #[derive(Debug)]
     pub struct IType {
         pub op: u8,
         pub rs: u8,
@@ -18,11 +20,13 @@ pub mod instruction_types {
         pub immediate: u16,
     }
 
+    #[derive(Debug)]
     pub struct JType {
         pub op: u8,
         pub addr: u32,
     }
 
+    #[derive(Debug)]
     pub enum Instruction {
         RType(RType),
         IType(IType),
@@ -37,30 +41,56 @@ mod constants {
 mod processor {
     use crate::instruction_types::*;
 
-
     pub fn instruction_decode(instruction: u32) -> Instruction {
-        if (instruction == 0) { // placeholder for spotting Rtype
-            return Instruction::RType(RType {op: 0, rs: 0, rt: 0, rd: 0, shamt: 0, funct: 0});
-        } else if (instruction == 1) { // placeholder for spotting IType
-            return Instruction::IType(IType {op: 0, rs: 0, rt: 0, immediate: 0});
-        } else if(instruction == 2) {
-            return Instruction::JType(JType {op: 0, addr: 0});
+        if instruction == 0 {
+            // placeholder for spotting Rtype
+            return Instruction::RType(RType {
+                op: 1,
+                rs: 0,
+                rt: 0,
+                rd: 0,
+                shamt: 0,
+                funct: 0,
+            });
+        } else if instruction == 1 {
+            // placeholder for spotting IType
+            return Instruction::IType(IType {
+                op: 2,
+                rs: 0,
+                rt: 0,
+                immediate: 0,
+            });
+        } else if instruction == 2 {
+            return Instruction::JType(JType { op: 3, addr: 0 });
         }
 
-        return Instruction::RType(RType {op: 0, rs: 0, rt: 0, rd: 0, shamt: 0, funct: 0});
+        return Instruction::RType(RType {
+            op: 0,
+            rs: 0,
+            rt: 0,
+            rd: 0,
+            shamt: 0,
+            funct: 0,
+        });
     }
 
+    #[derive(Debug)]
     pub struct Cpu {
         pc: u32,
+        #[allow(dead_code)]
         registers: [u32; 32],
     }
 
+    #[derive(Debug)]
     pub struct Fpu {
+        #[allow(dead_code)]
         registers: [f32; 32],
     }
 
+    #[derive(Debug)]
     pub struct Processor {
         cpu: Cpu,
+        #[allow(dead_code)]
         fpu: Fpu,
     }
 
@@ -88,6 +118,15 @@ mod processor {
                 fpu: Fpu::new(),
             }
         }
+
+        pub fn exacute_instruction(&mut self, instruction: &Instruction) {
+            self.cpu.pc = 0; // placeholder
+            match instruction {
+                Instruction::IType(_) => println!("instruction is an Itype"),
+                Instruction::JType(_) => println!("Instruction is a JType"),
+                Instruction::RType(_) => println!("Instructions is aa RType"),
+            }
+        }
     }
 }
 
@@ -96,6 +135,7 @@ mod emu {
     use crate::processor;
     use crate::processor::*;
     pub struct Emulator {
+        #[allow(dead_code)]
         ram: [u32; RAM_SIZE],
         processor: Processor,
     }
@@ -103,11 +143,11 @@ mod emu {
     // This should be the interface the the frontend uses to interact with
     // the emulator
     pub trait EmulatorAPI {
-        fn run_instruction(&self, instruction: u32);
+        fn run_instruction(&mut self, instruction: u32);
     }
 
     impl Emulator {
-        pub fn new() -> Self{
+        pub fn new() -> Self {
             Emulator {
                 ram: [0; RAM_SIZE], // init ram to 0
                 processor: Processor::new(),
@@ -116,13 +156,14 @@ mod emu {
     }
 
     impl EmulatorAPI for Emulator {
-        fn run_instruction(&self, instruction: u32) {
+        fn run_instruction(&mut self, instruction_bytes: u32) {
             println!("Pretending to run an instruction");
-            let thing = processor::instruction_decode(instruction);
+            let instruction = processor::instruction_decode(instruction_bytes);
+            self.processor.exacute_instruction(&instruction);
+            println!("This is the instruction: {:#?}", &instruction);
         }
     }
 }
-
 
 fn main() {
     println!("Hello, world!");
