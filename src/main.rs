@@ -119,7 +119,7 @@ mod processor {
             }
         }
 
-        pub fn exacute_instruction(&mut self, instruction: &Instruction) {
+        pub fn execute_instruction(&mut self, instruction: &Instruction) {
             self.cpu.pc = 0; // placeholder
             match instruction {
                 Instruction::IType(_) => println!("instruction is an Itype"),
@@ -140,8 +140,7 @@ mod emu {
         processor: Processor,
     }
 
-    // This should be the interface the the frontend uses to interact with
-    // the emulator
+    // Interface for frontend to interact with the emulation core
     pub trait EmulatorAPI {
         fn run_instruction(&mut self, instruction: u32);
     }
@@ -159,7 +158,7 @@ mod emu {
         fn run_instruction(&mut self, instruction_bytes: u32) {
             println!("Pretending to run an instruction");
             let instruction = processor::instruction_decode(instruction_bytes);
-            self.processor.exacute_instruction(&instruction);
+            self.processor.execute_instruction(&instruction);
             println!("This is the instruction: {:#?}", &instruction);
         }
     }
