@@ -1,4 +1,5 @@
 use crate::emu::EmulatorAPI;
+use crate::emu::Emulator;
 
 pub mod instruction_types {
 
@@ -11,7 +12,7 @@ pub mod instruction_types {
         pub shamt: u8,
         pub funct: u8,
     }
-
+    
     #[derive(Debug)]
     pub struct IType {
         pub op: u8,
@@ -39,6 +40,7 @@ mod constants {
 }
 
 mod processor {
+    use super::*;
     use crate::instruction_types::*;
 
     pub fn instruction_decode(instruction: u32) -> Instruction {
@@ -111,6 +113,12 @@ mod processor {
         }
     }
 
+    impl IType {
+        fn execute(&mut self){
+
+        }
+    }
+
     impl Processor {
         pub fn new() -> Self {
             Processor {
@@ -172,3 +180,5 @@ fn main() {
     emu_core.run_instruction(2);
     emu_core.run_instruction(3);
 }
+
+
